@@ -1,0 +1,12 @@
+# IDE / LSP caches
+.ruby-lsp/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor swap/backup
+*.swp
+*.swo
+*~
