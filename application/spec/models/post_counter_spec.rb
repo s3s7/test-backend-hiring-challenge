@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Post, type: :model do
-  before(:all) do
-    @author = User.create!(name: 'Counter Author', email: "author-#{rand(100)}@example.com", password: 'password')
+  before do
+    @author = User.create!(name: 'Counter Author', email: "author-#{SecureRandom.hex(8)}@example.com", password: 'password')
   end
 
   it 'starts with zero views' do

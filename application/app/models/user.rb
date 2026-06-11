@@ -2,6 +2,9 @@ class User < ApplicationRecord
   has_many :posts
   has_many :comments
 
+  validates :name, presence: true
+  validates :email, presence: true
+
   def password=(password)
     super(encryptor.encrypt_and_sign(password))
   end
