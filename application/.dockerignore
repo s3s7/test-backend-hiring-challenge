@@ -1,0 +1,23 @@
+# Git 管理ファイル（ビルドに不要、かつイメージサイズ増加の原因）
+.git
+.gitignore
+
+# ログ・一時ファイル（コンテナ起動時に再作成される）
+log/
+tmp/
+
+# テスト・CI 関連（本番イメージに不要）
+spec/
+.rspec
+
+# エディタ設定（イメージに不要）
+.vscode/
+.idea/
+
+# OS 生成ファイル
+.DS_Store
+
+# Docker 自身（再帰的なコピーを防ぐ）
+Dockerfile
+.dockerignore
+compose.yml
