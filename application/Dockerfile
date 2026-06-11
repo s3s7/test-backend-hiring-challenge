@@ -10,6 +10,7 @@ RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
       build-essential \
       default-libmysqlclient-dev \
+      libyaml-dev \
       git \
       curl && \
     rm -rf /var/lib/apt/lists/*
@@ -42,13 +43,14 @@ RUN apt-get update -qq && \
 # 非 root ユーザーを作成。
 # root でコンテナを動かすと、コンテナ侵害時にホストへの影響が大きい。
 RUN groupadd --gid 1000 app && \
-    useradd --uid 1000 --gid 1000 --no-create-home app
+    useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash app
 
 WORKDIR /app
 
 # builder ステージでコンパイル済みの gems をコピー（アプリコードはコピーしない）。
 # 開発時は compose.yml のボリュームマウントでコードを反映する。
-COPY --from=builder /usr/local/bundle /usr/local/bundle
+# 開発時に gem を追加して `bundle install` を実行できるよう app 所有にしておく。
+COPY --from=builder --chown=app:app /usr/local/bundle /usr/local/bundle
 
 # アプリコードをコピーし、所有者を app ユーザーに設定。
 COPY --chown=app:app . .
