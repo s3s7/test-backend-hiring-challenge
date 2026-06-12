@@ -21,4 +21,14 @@ Rails.application.routes.draw do
   get 'login', to: 'sessions#new'
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy'
+
+  namespace :api do
+    namespace :v1 do
+      resources :posts, only: [ :index ]
+    end
+  end
+
+  # OpenAPI ドキュメント閲覧用エンドポイント
+  get '/api-docs', to: 'api_docs#show', as: :api_docs
+  get '/api-docs/openapi.yaml', to: 'api_docs#openapi', as: :api_docs_openapi
 end
