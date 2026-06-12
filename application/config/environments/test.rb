@@ -47,4 +47,9 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # rspec request spec はデフォルトで www.example.com を使うが、Rails 8 の
+  # HostAuthorization は明示許可しないと弾く。テスト用に許可する。
+  config.hosts << "www.example.com"
+  config.hosts << "example.com"
 end

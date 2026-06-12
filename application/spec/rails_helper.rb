@@ -1,5 +1,7 @@
 require 'spec_helper'
-ENV['RAILS_ENV'] ||= 'test'
+# docker-compose で RAILS_ENV=development が固定されているため、||= だと
+# rspec が dev 環境（dev DB）で走ってしまう。常に test を強制する。
+ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../config/environment', __dir__)
 
 abort("Rails環境が本番モードで実行されています！") if Rails.env.production?
