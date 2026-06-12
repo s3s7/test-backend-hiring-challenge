@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_24_020001) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_11_100000) do
   create_table "comments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.text "content"
+    t.text "content", null: false
     t.datetime "created_at", null: false
-    t.text "name"
+    t.text "name", null: false
     t.bigint "post_id", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
@@ -23,11 +23,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_020001) do
   end
 
   create_table "posts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.text "content"
+    t.text "content", null: false
     t.datetime "created_at", null: false
     t.integer "notifications_count", default: 0, null: false
     t.boolean "published", default: false, null: false
-    t.string "title"
+    t.string "title", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.integer "views_count", default: 0, null: false
@@ -37,15 +37,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_020001) do
   create_table "tenants", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name", null: false
-    t.string "subdomain"
+    t.string "subdomain", null: false
     t.datetime "updated_at", null: false
+    t.index ["subdomain"], name: "index_tenants_on_subdomain_unique", unique: true
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "email"
-    t.string "name"
-    t.string "password"
+    t.string "email", null: false
+    t.string "name", null: false
+    t.string "password", null: false
     t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email_unique", unique: true
   end
 end
