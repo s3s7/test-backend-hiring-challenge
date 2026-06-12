@@ -1,0 +1,21 @@
+{
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+
+  "[ruby]": {
+    "editor.defaultFormatter": "Shopify.ruby-lsp",
+    "editor.formatOnSave": true
+  },
+  "rubyLsp.formatter": "rubocop",
+  "rubyLsp.linters": ["rubocop"],
+
+  // application/ 配下に Gemfile があるため明示（リポジトリルートから見たパス）
+  "rubyLsp.bundleGemfile": "application/Gemfile",
+
+  "files.exclude": {
+    "**/.git": true,
+    "**/log": true,
+    "**/tmp": true
+  }
+}

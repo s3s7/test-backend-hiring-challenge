@@ -1,19 +1,50 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: development   # Dockerfile の development ステージを使用
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy   # DB が healthcheck をパスするまで待つ
+      redis:
+        condition: service_healthy
     environment:
       - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=password
       - DB_NAME=app_development
+      - REDIS_URL=redis://redis:6379/0
+      - RAILS_ENV=development
+    volumes:
+      - .:/app                    # コードをマウント（再ビルド不要で変更が反映される）
+      - bundle_cache:/usr/local/bundle  # gem キャッシュを永続化（毎回 bundle install を防ぐ）
+      - /app/tmp                  # tmp は匿名ボリュームにしてホストと分離
+      - /app/log
+    restart: unless-stopped
+
+  sidekiq:
+    build:
+      context: .
+      target: development
+    command: bundle exec sidekiq
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=app_development
+      - REDIS_URL=redis://redis:6379/0
+      - RAILS_ENV=development
     volumes:
       - .:/app
-      - /app/tmp
-      - /app/log
+      - bundle_cache:/usr/local/bundle
+    restart: unless-stopped
 
   db:
     image: mysql:8.0
@@ -24,6 +55,30 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    # MySQL が接続受付可能になるまで待つためのヘルスチェック。
+    # mysqladmin ping は MySQL が起動しただけでなく接続可能な状態を確認する。
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
 volumes:
   mysql_data:
+  redis_data:
+  bundle_cache:    # gem を永続化するボリューム（ビルドキャッシュとは別）
