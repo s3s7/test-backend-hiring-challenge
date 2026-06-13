@@ -13,3 +13,14 @@ AllCops:
     - "bin/**/*"
     - "vendor/**/*"
     - "node_modules/**/*"
+
+RSpec/MultipleExpectations:
+  Max: 5
+RSpec/ExampleLength:
+  Max: 15
+RSpec/ContextWording:
+  Enabled: false
+RSpec/LetSetup:
+  Enabled: false
+RSpec/InstanceVariable:
+  Enabled: false

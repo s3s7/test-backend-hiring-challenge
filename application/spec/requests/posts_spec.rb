@@ -34,7 +34,7 @@ RSpec.describe 'Posts (refactored to service layer)', type: :request do
       patch "/posts/#{post_record.id}/publish"
 
       expect(response).to redirect_to(post_record)
-      expect(post_record.reload.published).to eq(true)
+      expect(post_record.reload.published).to be(true)
     end
   end
 end

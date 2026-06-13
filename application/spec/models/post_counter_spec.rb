@@ -6,7 +6,7 @@ RSpec.describe Post, type: :model do
   end
 
   it 'starts with zero views' do
-    post = Post.create!(title: 'Counter', content: 'body', user: @author)
+    post = described_class.create!(title: 'Counter', content: 'body', user: @author)
     expect(post.views_count).to eq(0)
   end
 
@@ -15,8 +15,8 @@ RSpec.describe Post, type: :model do
   end
 
   it 'counts only the posts created in this example' do
-    Post.create!(title: 'A', content: 'body', user: @author)
-    Post.create!(title: 'B', content: 'body', user: @author)
+    described_class.create!(title: 'A', content: 'body', user: @author)
+    described_class.create!(title: 'B', content: 'body', user: @author)
     expect(@author.posts.count).to eq(2)
   end
 end

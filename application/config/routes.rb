@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # Health check for uptime monitoring
   get "up" => "rails/health#show", as: :rails_health_check
-  root 'posts#index'
+  root "posts#index"
   resources :posts do
     collection do
       get :feed
@@ -16,11 +16,11 @@ Rails.application.routes.draw do
       patch :approve
     end
   end
-  get 'reports/inactive_users', to: 'reports#inactive_users'
-  get 'reports/daily_posts', to: 'reports#daily_posts'
-  get 'login', to: 'sessions#new'
-  post 'login', to: 'sessions#create'
-  delete 'logout', to: 'sessions#destroy'
+  get "reports/inactive_users", to: "reports#inactive_users"
+  get "reports/daily_posts", to: "reports#daily_posts"
+  get "login", to: "sessions#new"
+  post "login", to: "sessions#create"
+  delete "logout", to: "sessions#destroy"
 
   namespace :api do
     namespace :v1 do
@@ -30,6 +30,6 @@ Rails.application.routes.draw do
   end
 
   # OpenAPI ドキュメント閲覧用エンドポイント
-  get '/api-docs', to: 'api_docs#show', as: :api_docs
-  get '/api-docs/openapi.yaml', to: 'api_docs#openapi', as: :api_docs_openapi
+  get "/api-docs", to: "api_docs#show", as: :api_docs
+  get "/api-docs/openapi.yaml", to: "api_docs#openapi", as: :api_docs_openapi
 end

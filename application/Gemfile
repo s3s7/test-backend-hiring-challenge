@@ -29,4 +29,3 @@ group :development, :test do
   gem "bullet"
   gem "stackprof"
 end
-

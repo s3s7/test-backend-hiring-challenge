@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_12_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_13_024134) do
+  create_table "comment_notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "comment_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_id"], name: "index_comment_notifications_on_comment_id_unique", unique: true
+  end
+
   create_table "comments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "content", null: false
     t.datetime "created_at", null: false
@@ -70,6 +77,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_12_090000) do
     t.index ["email"], name: "index_users_on_email_unique", unique: true
   end
 
+  add_foreign_key "comment_notifications", "comments", on_delete: :cascade
   add_foreign_key "post_tags", "posts"
   add_foreign_key "post_tags", "tags"
 end
