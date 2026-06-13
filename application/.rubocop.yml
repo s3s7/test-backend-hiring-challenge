@@ -20,6 +20,8 @@ RSpec/ExampleLength:
   Max: 15
 RSpec/MultipleMemoizedHelpers:
   Max: 6
+RSpec/DescribeMethod:
+  Enabled: false
 RSpec/ContextWording:
   Enabled: false
 RSpec/LetSetup:

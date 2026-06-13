@@ -9,7 +9,7 @@ class PostsController < ApplicationController
   end
 
   def feed
-    render json: { data: Posts::FeedQuery.new(scope: Post.for_current_tenant).call }
+    render json: { data: Posts::FeedQuery.new(scope: Post.for_current_tenant).cached_call }
   end
 
   def export
