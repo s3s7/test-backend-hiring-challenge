@@ -1,7 +1,11 @@
 class Comment < ApplicationRecord
   include TenantScoped
 
-  belongs_to :post
+  # 第9問: /posts/feed の低レイヤキャッシュは Post.cache_key_with_version
+  # （= scope の max(updated_at) と count を集約したキー）で無効化する。
+  # touch: true で Comment の create/destroy が Post.updated_at を bump し、
+  # comment_count が変わる時に feed キャッシュが自動的に作り直される。
+  belongs_to :post, touch: true
   belongs_to :user, optional: true
 
   validates :name, presence: true
