@@ -10,8 +10,9 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new(comment_params.merge(user_id: current_user&.id))
     if @comment.save
-      CommentNotificationJob.perform_later(@comment.id)
-      redirect_to @comment.post, notice: 'Comment created.'
+      # 第7問: enqueue は Comment モデルの after_commit に移したので、
+      # コントローラ側からの perform_later は撤去（dual-write 防止）。
+      redirect_to @comment.post, notice: "Comment created."
     else
       render :new
     end
@@ -24,7 +25,7 @@ class CommentsController < ApplicationController
       comment.post.lock!
       comment.touch
     end
-    redirect_to comments_path, notice: 'Comment approved.'
+    redirect_to comments_path, notice: "Comment approved."
   end
 
   def comments_by_post_id
@@ -38,7 +39,7 @@ class CommentsController < ApplicationController
   def update
     @comment = Comment.find(params[:id])
     if @comment.update(params[:comment])
-      redirect_to comments_path, notice: 'Comment updated.'
+      redirect_to comments_path, notice: "Comment updated."
     else
       render :edit
     end
@@ -47,7 +48,7 @@ class CommentsController < ApplicationController
   def destroy
     @comment = Comment.find(params[:id])
     @comment.destroy
-    redirect_to comments_path, notice: 'Comment deleted.'
+    redirect_to comments_path, notice: "Comment deleted."
   end
 
   private

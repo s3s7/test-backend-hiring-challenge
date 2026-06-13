@@ -8,7 +8,7 @@ RSpec.describe Posts::Publisher do
     it 'published を true にして post を返す' do
       result = described_class.new(post).call
 
-      expect(post.reload.published).to eq(true)
+      expect(post.reload.published).to be(true)
       expect(result).to eq(post)
     end
 
@@ -39,7 +39,7 @@ RSpec.describe Posts::Publisher do
       allow(post).to receive(:update!).and_raise(ActiveRecord::RecordInvalid.new(post))
 
       expect { described_class.new(post).call }.to raise_error(ActiveRecord::RecordInvalid)
-      expect(post.reload.published).to eq(false)
+      expect(post.reload.published).to be(false)
     end
   end
 end

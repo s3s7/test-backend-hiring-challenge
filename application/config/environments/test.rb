@@ -52,4 +52,9 @@ Rails.application.configure do
   # HostAuthorization は明示許可しないと弾く。テスト用に許可する。
   config.hosts << "www.example.com"
   config.hosts << "example.com"
+
+  # 第7問: application.rb で :sidekiq を設定しているが、test では
+  # ActiveJob::TestHelper の have_enqueued_job などのアサートを使うために
+  # :test adapter を強制する（Sidekiq/Redis 依存をテストから外す目的でもある）。
+  config.active_job.queue_adapter = :test
 end

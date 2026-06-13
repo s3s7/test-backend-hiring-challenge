@@ -44,7 +44,7 @@ RSpec.describe DataFixer do
         post = Post.create!(title: 't', content: 'c', user: newer)
         comment = Comment.create!(name: 'n', content: 'c', post: post, user: newer)
 
-        DataFixer.run!
+        described_class.run!
 
         survivors = User.where("LOWER(email) = ?", 'admin@example.com')
         expect(survivors.count).to eq(1)
@@ -72,7 +72,7 @@ RSpec.describe DataFixer do
         User.where(id: broken_older.id).update_all(created_at: 2.days.ago, updated_at: 2.days.ago)
         User.where(id: valid_newer.id).update_all(created_at: 1.day.ago, updated_at: 1.day.ago)
 
-        DataFixer.run!
+        described_class.run!
 
         survivors = User.where("LOWER(email) = ?", 'pick@example.com')
         expect(survivors.count).to eq(1)
@@ -87,10 +87,10 @@ RSpec.describe DataFixer do
         u2 = User.new(name: 'B', email: 'IDEM-A@example.com', password: 'pw')
         u2.save(validate: false)
 
-        DataFixer.run!
+        described_class.run!
         first_state = User.where("LOWER(email) = ?", 'idem-a@example.com').pluck(:id, :email).sort
 
-        DataFixer.run!
+        described_class.run!
         second_state = User.where("LOWER(email) = ?", 'idem-a@example.com').pluck(:id, :email).sort
 
         expect(second_state).to eq(first_state)
@@ -102,7 +102,7 @@ RSpec.describe DataFixer do
         clean = User.create!(name: 'Clean', email: "clean-#{SecureRandom.hex(8)}@example.com", password: 'pw')
         before_attrs = clean.attributes.slice('id', 'name', 'email')
 
-        DataFixer.run!
+        described_class.run!
 
         reloaded = User.find_by(id: clean.id)
         expect(reloaded).not_to be_nil
@@ -118,7 +118,7 @@ RSpec.describe DataFixer do
         mixed.email = "#{prefix}@Example.COM"
         mixed.save(validate: false)
 
-        DataFixer.run!
+        described_class.run!
 
         expect(mixed.reload.email).to eq("#{prefix}@example.com".downcase)
       end
