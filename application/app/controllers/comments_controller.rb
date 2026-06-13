@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
   def index
-    @comments = Comment.includes(:post, :user).all
+    @comments = Comment.for_current_tenant.includes(:post, :user).all
   end
 
   def new
@@ -19,7 +19,7 @@ class CommentsController < ApplicationController
   end
 
   def approve
-    comment = Comment.find(params[:id])
+    comment = Comment.for_current_tenant.find(params[:id])
     Comment.transaction do
       comment.lock!
       comment.post.lock!
@@ -29,15 +29,15 @@ class CommentsController < ApplicationController
   end
 
   def comments_by_post_id
-    @comments = Comment.includes(:user).where(post_id: params[:post_id])
+    @comments = Comment.for_current_tenant.includes(:user).where(post_id: params[:post_id])
   end
 
   def edit
-    @comment = Comment.find(params[:id])
+    @comment = Comment.for_current_tenant.find(params[:id])
   end
 
   def update
-    @comment = Comment.find(params[:id])
+    @comment = Comment.for_current_tenant.find(params[:id])
     if @comment.update(params[:comment])
       redirect_to comments_path, notice: "Comment updated."
     else
@@ -46,7 +46,7 @@ class CommentsController < ApplicationController
   end
 
   def destroy
-    @comment = Comment.find(params[:id])
+    @comment = Comment.for_current_tenant.find(params[:id])
     @comment.destroy
     redirect_to comments_path, notice: "Comment deleted."
   end

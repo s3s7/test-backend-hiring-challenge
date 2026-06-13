@@ -1,4 +1,6 @@
 class Post < ApplicationRecord
+  include TenantScoped
+
   belongs_to :user
   has_many :comments
   has_many :post_tags, dependent: :destroy

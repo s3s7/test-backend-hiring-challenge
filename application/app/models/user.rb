@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include TenantScoped
+
   EMAIL_FORMAT = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
 
   has_many :posts
