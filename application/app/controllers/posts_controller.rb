@@ -1,20 +1,16 @@
 class PostsController < ApplicationController
   def index
-    @posts = Post.all.limit(50)
+    @posts = Post.includes(:user).limit(50)
   end
 
   def show
-    @post = Post.find(params[:id])
+    @post = Post.includes(comments: :user).find(params[:id])
     @post.update(views_count: @post.views_count + 1)
-    @post.comments.each do |comment|
-      comment.user.name
-    end
   end
 
   def feed
     posts = Post.includes(:user, :comments).limit(100)
     result = posts.map do |post|
-      Rails.logger.info("Rendering post #{post.id}: #{post.attributes.inspect}")
       {
         id: post.id,
         title: normalize(post.title),
@@ -27,9 +23,9 @@ class PostsController < ApplicationController
   end
 
   def export
-    posts = Post.all.to_a
+    posts = Post.includes(:user, :comments).all.to_a
     rows = posts.map do |post|
-      [post.id, post.title, post.content, post.user&.name, post.comments.to_a.size].join(",")
+      [ post.id, post.title, post.content, post.user&.name, post.comments.size ].join(",")
     end
     send_data(rows.join("\n"), filename: "posts.csv")
   end
@@ -73,8 +69,6 @@ class PostsController < ApplicationController
   private
 
   def normalize(text)
-    value = text.to_s
-    500.times { value = value.gsub(/\s+/, " ").strip }
-    value
+    text.to_s.gsub(/\s+/, " ").strip
   end
 end
