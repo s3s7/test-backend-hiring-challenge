@@ -8,14 +8,18 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_user
 
-  private
-
-  def set_current_tenant
-    @current_tenant = Tenant.find_by(subdomain: request.subdomain)
+  def current_tenant
+    Current.tenant
   end
   helper_method :current_tenant
 
-  def current_tenant
-    @current_tenant
+  private
+
+  # subdomain でテナントを解決し、Current.tenant に置く。
+  # マッチしない場合は "default" tenant を fallback として使う（dev/test 用）。
+  # 本番では subdomain 必須として 404 を返す等、別途運用方針が必要。
+  def set_current_tenant
+    Current.tenant = Tenant.find_by(subdomain: request.subdomain.presence) ||
+                     Tenant.find_by(subdomain: "default")
   end
 end

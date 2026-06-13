@@ -18,4 +18,14 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
+
+  # 第8問: マルチテナント分離（共有スキーマ + tenant_id）の試験用デフォルト。
+  # 既存 spec は Current.tenant を明示せず User/Post/Comment を作成しているため、
+  # 各 example の前にデフォルトテナントを確立しておく。
+  # クロステナント分離を検証する spec は Current.tenant を上書きすればよい。
+  config.before(:each) do
+    Current.reset
+    Current.tenant = Tenant.find_by(subdomain: "default") ||
+                     Tenant.create!(name: "Default", subdomain: "default")
+  end
 end

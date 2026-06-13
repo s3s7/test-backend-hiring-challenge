@@ -1,4 +1,6 @@
 class Comment < ApplicationRecord
+  include TenantScoped
+
   belongs_to :post
   belongs_to :user, optional: true
 

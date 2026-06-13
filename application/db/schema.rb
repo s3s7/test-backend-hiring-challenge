@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_13_024134) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_13_070025) do
   create_table "comment_notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "comment_id", null: false
     t.datetime "created_at", null: false
@@ -23,9 +23,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_13_024134) do
     t.datetime "created_at", null: false
     t.text "name", null: false
     t.bigint "post_id", null: false
+    t.bigint "tenant_id"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["tenant_id"], name: "index_comments_on_tenant_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
@@ -45,11 +47,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_13_024134) do
     t.datetime "created_at", null: false
     t.integer "notifications_count", default: 0, null: false
     t.boolean "published", default: false, null: false
+    t.bigint "tenant_id"
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.integer "views_count", default: 0, null: false
     t.index ["created_at", "id"], name: "index_posts_on_created_at_and_id"
+    t.index ["tenant_id", "created_at", "id"], name: "index_posts_on_tenant_id_and_created_at_and_id"
+    t.index ["tenant_id"], name: "index_posts_on_tenant_id"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
@@ -73,11 +78,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_13_024134) do
     t.string "email", null: false
     t.string "name", null: false
     t.string "password", null: false
+    t.bigint "tenant_id"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email_unique", unique: true
+    t.index ["tenant_id"], name: "index_users_on_tenant_id"
   end
 
   add_foreign_key "comment_notifications", "comments", on_delete: :cascade
+  add_foreign_key "comments", "tenants"
   add_foreign_key "post_tags", "posts"
   add_foreign_key "post_tags", "tags"
+  add_foreign_key "posts", "tenants"
+  add_foreign_key "users", "tenants"
 end
