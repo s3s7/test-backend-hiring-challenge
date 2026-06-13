@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_12_082149) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_12_090000) do
   create_table "comments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "content", null: false
     t.datetime "created_at", null: false
@@ -20,6 +20,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_12_082149) do
     t.bigint "user_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "post_tags", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "post_id", null: false
+    t.bigint "tag_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id", "tag_id"], name: "index_post_tags_on_post_id_and_tag_id_unique", unique: true
+    t.index ["post_id"], name: "index_post_tags_on_post_id"
+    t.index ["tag_id", "post_id"], name: "index_post_tags_on_tag_id_and_post_id"
+    t.index ["tag_id"], name: "index_post_tags_on_tag_id"
   end
 
   create_table "posts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -33,6 +44,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_12_082149) do
     t.integer "views_count", default: 0, null: false
     t.index ["created_at", "id"], name: "index_posts_on_created_at_and_id"
     t.index ["user_id"], name: "index_posts_on_user_id"
+  end
+
+  create_table "tags", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_tags_on_name_unique", unique: true
   end
 
   create_table "tenants", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -51,4 +69,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_12_082149) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email_unique", unique: true
   end
+
+  add_foreign_key "post_tags", "posts"
+  add_foreign_key "post_tags", "tags"
 end

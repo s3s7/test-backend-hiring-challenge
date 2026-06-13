@@ -1,11 +1,6 @@
 class CommentsController < ApplicationController
   def index
-    @comments = Comment.all
-    @comments.each do |comment|
-      comment.post.title
-      comment.user&.name
-      comment.name
-    end
+    @comments = Comment.includes(:post, :user).all
   end
 
   def new
@@ -33,9 +28,7 @@ class CommentsController < ApplicationController
   end
 
   def comments_by_post_id
-    post_id = params[:post_id]
-    all_comments = Comment.all
-    @comments = all_comments.select { |comment| comment.post_id == post_id.to_i }
+    @comments = Comment.includes(:user).where(post_id: params[:post_id])
   end
 
   def edit
