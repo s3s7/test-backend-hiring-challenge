@@ -9,25 +9,11 @@ class PostsController < ApplicationController
   end
 
   def feed
-    posts = Post.includes(:user, :comments).limit(100)
-    result = posts.map do |post|
-      {
-        id: post.id,
-        title: normalize(post.title),
-        author: post.user&.name,
-        body: normalize(post.content),
-        comment_count: post.comments.size
-      }
-    end
-    render json: { data: result }
+    render json: { data: Posts::FeedQuery.new.call }
   end
 
   def export
-    posts = Post.includes(:user, :comments).all.to_a
-    rows = posts.map do |post|
-      [ post.id, post.title, post.content, post.user&.name, post.comments.size ].join(",")
-    end
-    send_data(rows.join("\n"), filename: "posts.csv")
+    send_data(Posts::Exporter.new.call, filename: "posts.csv")
   end
 
   def new
@@ -52,11 +38,7 @@ class PostsController < ApplicationController
 
   def publish
     post = Post.find(params[:id])
-    Post.transaction do
-      post.lock!
-      post.comments.order(:id).each(&:lock!)
-      post.update!(published: true)
-    end
+    Posts::Publisher.new(post).call
     redirect_to post
   end
 
@@ -64,11 +46,5 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
     @post.destroy
     redirect_to posts_path
-  end
-
-  private
-
-  def normalize(text)
-    text.to_s.gsub(/\s+/, " ").strip
   end
 end
